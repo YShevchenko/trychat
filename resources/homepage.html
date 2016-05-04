@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <title>Try Chat</title>
+    <script type="text/javascript">
+        var ws;
+        function initWebSocket() {
+            ws = new WebSocket("ws://192.168.1.97:8080/chat");
+            ws.onopen = function (event) {
+            }
+            ws.onmessage = function (event) {
+                var $textarea = document.getElementById("messageBox");
+                $textarea.value = $textarea.value + event.data + "\n";
+            }
+            ws.onclose = function (event) {
+            }
+        };
+        function sendMessage() {
+            var messageField = document.getElementById("message");
+            var userNameField = document.getElementById("username");
+            var message = userNameField.value + ":" + messageField.value;
+            ws.send(message);
+            messageField.value = '';
+        }
+        function sendMessageOnEnter(e) {
+            if (e.keyCode == 13) {
+            sendMessage();
+            }
+        }
+    </script>
+</head>
+<body onload="initWebSocket();">
+    <h1>TRY CHAT</h1>
+    <div id="menu">
+        Type in your name here: <input id="username" value="Anonymous"/>
+    </div>
+    <div id="receivedMessages">
+        <textarea class="form-control" id="messageBox"  readonly="readonly" rows="20"></textarea>
+    </div>
+    <div id="messageInput">
+            Type your message here: <input id="message" type="text" class="form-control input-lg" onkeypress="sendMessageOnEnter(event)" />
+    </div>
+    <div id="messageOptions">
+        <button class="btn btn-primary btn-lg" onclick="sendMessage();">Send!</button>
+    </div>
+
+</body>
+</html>
