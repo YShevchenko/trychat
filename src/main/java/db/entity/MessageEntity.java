@@ -1,7 +1,5 @@
 package db.entity;
 
-import dto.MessageDTO;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -13,7 +11,7 @@ public class MessageEntity implements Serializable{
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(name = "user")
     private String user;
@@ -24,10 +22,7 @@ public class MessageEntity implements Serializable{
     @Column(name = "timestamp")
     private Date timestamp;
 
-    public MessageEntity(final MessageDTO messageDTO) {
-        this.setMessage(messageDTO.getMessage());
-        this.setUser(messageDTO.getUser());
-        this.setTimestamp(messageDTO.getTimestamp());
+    public MessageEntity(final MessageEntity messageEntity) {
     }
 
     public MessageEntity(){

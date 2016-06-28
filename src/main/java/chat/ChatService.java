@@ -3,7 +3,6 @@ package chat;
 import com.google.gson.Gson;
 import db.entity.MessageEntity;
 import db.service.DbService;
-import dto.MessageDTO;
 import org.eclipse.jetty.websocket.api.WebSocketException;
 
 import java.util.Collections;
@@ -13,15 +12,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatService {
 
+    private final DbService dbService = new DbService();
     private Set<ChatWebSocket> webSockets;
 
-    private final DbService dbService = new DbService();
-
-    public ChatService(){
+    public ChatService() {
         this.webSockets = Collections.newSetFromMap(new ConcurrentHashMap<>());
     }
 
-    public void add(ChatWebSocket webSocket){
+    public void add(ChatWebSocket webSocket) {
         webSockets.add(webSocket);
     }
 
@@ -30,42 +28,38 @@ public class ChatService {
     }
 
     public void saveMessageInDb(String data) {
-        MessageDTO messageDTO = formMessageDTO(data);
-        dbService.saveMessage(messageDTO);
+        MessageEntity messageEntity = formMessageEntity(data);
+        dbService.saveMessage(messageEntity);
     }
 
-    public void sendMessage(String data){
-        for(ChatWebSocket client: webSockets){
-            try{
-                MessageDTO messageDTO = formMessageDTO(data);
-                client.sendString(formResponseJson(messageDTO));
-            } catch (WebSocketException e){
+    public void sendMessage(String data) {
+        for (ChatWebSocket client : webSockets) {
+            try {
+                MessageEntity messageEntity = formMessageEntity(data);
+                client.sendString(formResponseJson(messageEntity));
+            } catch (WebSocketException e) {
                 System.out.println(e.getMessage());
             }
         }
     }
 
-    public void sendMessageHistory(){
-        for (MessageEntity messageDataSet:dbService.getLastMessages()){
-            MessageDTO messageDTO = new MessageDTO();
-            messageDTO.setUser(messageDataSet.getUser());
-            messageDTO.setMessage(messageDataSet.getMessage());
-            messageDTO.setTimestamp(messageDataSet.getTimestamp());
-            String json = formResponseJson(messageDTO);
+    public void sendMessageHistory() {
+        for (MessageEntity messageEntity : dbService.getLastMessages()) {
+            String json = formResponseJson(messageEntity);
             sendMessage(json);
         }
     }
 
-    private MessageDTO formMessageDTO(final String message){
+    private MessageEntity formMessageEntity(final String message) {
         Gson gson = new Gson();
-        MessageDTO messageDTO = gson.fromJson(message, MessageDTO.class);
-        messageDTO.setTimestamp(new Date());
-        return messageDTO;
+        MessageEntity messageEntity = gson.fromJson(message, MessageEntity.class);
+        messageEntity.setTimestamp(new Date());
+        return messageEntity;
     }
 
-    private String formResponseJson(final MessageDTO messageDTO){
+    private String formResponseJson(final MessageEntity messageEntity) {
         Gson gson = new Gson();
-        return gson.toJson(messageDTO);
+        return gson.toJson(messageEntity);
     }
 
 }

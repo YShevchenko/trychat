@@ -1,7 +1,6 @@
 package db.dao;
 
 import db.entity.MessageEntity;
-import dto.MessageDTO;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -29,7 +28,7 @@ public class MessageDao {
         return result;
     }
 
-    public long insertMessage(final MessageDTO messageDTO) throws HibernateException {
-        return (Long) session.save(new MessageEntity(messageDTO));
+    public long insertMessage(final MessageEntity messageEntity) throws HibernateException {
+        return (Long) session.save(messageEntity);
     }
 }

@@ -2,7 +2,6 @@ package db.service;
 
 import db.dao.MessageDao;
 import db.entity.MessageEntity;
-import dto.MessageDTO;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -60,12 +59,12 @@ public class DbService {
         }
     }
 
-    public void saveMessage(final MessageDTO messageDTO) throws HibernateException {
+    public void saveMessage(final MessageEntity messageEntity) throws HibernateException {
         try {
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
             MessageDao dao = new MessageDao(session);
-            dao.insertMessage(messageDTO);
+            dao.insertMessage(messageEntity);
             transaction.commit();
             session.close();
         } catch (HibernateException e) {
