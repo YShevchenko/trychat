@@ -20,10 +20,12 @@ public class ChatWebSocket {
     public void onOpen(Session session){
         chatService.add(this);
         this.session = session;
+        chatService.sendMessageHistory();
     }
 
     @OnWebSocketMessage
     public void onMessage(String data) {
+        chatService.saveMessageInDb(data);
         chatService.sendMessage(data);
     }
 

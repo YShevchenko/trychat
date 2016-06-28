@@ -7,12 +7,15 @@
     <script type="text/javascript">
         var ws;
         function initWebSocket() {
-            ws = new WebSocket("ws://192.168.1.97:8080/chat");
+            ws = new WebSocket("ws://localhost:8081/chat");
             ws.onopen = function (event) {
             }
             ws.onmessage = function (event) {
-                var $textarea = document.getElementById("messageBox");
-                $textarea.value = $textarea.value + event.data + "\n";
+                var messageBoxElement = document.getElementById("messageBox");
+                var messageJson = JSON.parse(event.data);
+                var displayedMessage = messageJson.timestamp + "@" + messageJson.user + ": " + messageJson.message;
+                messageBoxElement.value = messageBoxElement.value + displayedMessage + "\n";
+                messageBoxElement.scrollTop = messageBoxElement.scrollHeight;
             }
             ws.onclose = function (event) {
             }
@@ -20,8 +23,8 @@
         function sendMessage() {
             var messageField = document.getElementById("message");
             var userNameField = document.getElementById("username");
-            var message = userNameField.value + ":" + messageField.value;
-            ws.send(message);
+            var message = {user:userNameField.value, message:messageField.value};
+            ws.send(JSON.stringify(message));
             messageField.value = '';
         }
         function sendMessageOnEnter(e) {

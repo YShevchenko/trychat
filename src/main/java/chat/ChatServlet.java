@@ -5,10 +5,10 @@ import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet(name = "WebSocketChatServlet", urlPatterns = {"/chat"})
-public class WebSocketChatServlet extends WebSocketServlet{
+@WebServlet(name = "ChatServlet", urlPatterns = {"/chat"})
+public class ChatServlet extends WebSocketServlet{
     private final ChatService chatService;
-    public WebSocketChatServlet(){
+    public ChatServlet(){
         this.chatService = new ChatService();
     }
 
